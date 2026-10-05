@@ -1,0 +1,163 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ------------------------------------------------------------------
+   Kritiq — DA « objet réel », palette d'origine de la marque
+   Bleu nuit (fond) · bleu Kritiq (actions) · orange (valeurs, notes) · blanc (texte).
+   ------------------------------------------------------------------ */
+
+@theme inline {
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-2xl: 22px;
+  --radius-full: 9999px;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-high: var(--surface-high);
+  --color-line: var(--line);
+  --color-muted: var(--surface);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-card: var(--surface);
+  --color-card-foreground: var(--foreground);
+  --color-popover: var(--surface-high);
+  --color-popover-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--ink);
+  --color-secondary-foreground: var(--foreground);
+  --color-accent: var(--surface-high);
+  --color-accent-foreground: var(--foreground);
+  --color-value: var(--value);
+  --color-value-foreground: var(--value);
+  --color-ink: var(--ink);
+  --color-destructive: oklch(0.62 0.22 25);
+  --color-destructive-foreground: #ffffff;
+  --color-border: var(--line);
+  --color-input: var(--surface-high);
+  --color-ring: var(--primary);
+
+  --font-display: "Inter Tight", "Inter", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+:root {
+  --background: #030923;
+  --foreground: #ffffff;
+  --surface: #041a53;
+  --surface-high: #0b2a78;
+  --line: #0e2361;
+  --primary: #0059ff;
+  --primary-foreground: #ffffff;
+  --ink: #0b2a78;
+  --value: #f4550a;
+  --muted-foreground: #7c8ac4;
+  --radius: 14px;
+}
+
+.dark {
+  --background: #030923;
+  --foreground: #ffffff;
+  --surface: #041a53;
+  --surface-high: #0b2a78;
+  --line: #0e2361;
+  --primary: #0059ff;
+  --primary-foreground: #ffffff;
+  --ink: #0b2a78;
+  --value: #f4550a;
+  --muted-foreground: #7c8ac4;
+}
+
+@layer base {
+  html,
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Grain papier, posé une fois sur toute l'app. */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    pointer-events: none;
+    opacity: 0.09;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1.1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+
+  * {
+    border-color: var(--line);
+  }
+
+  ::selection {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  @media (pointer: fine) {
+    html.has-cursor,
+    html.has-cursor * {
+      cursor: none !important;
+    }
+  }
+}
+
+/* Titres : grotesque très grasse, serrée, en casse normale. */
+@utility font-display {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 0.88;
+}
+
+/* Petits blocs éditoriaux en capitales espacées. */
+@utility label {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+@utility hairline {
+  border-color: var(--line);
+}
+
+/* Révélation lettre par lettre (intro + titres). */
+.split-char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* Effets d'easter eggs partagés. */
+.egg-grayscale {
+  filter: grayscale(1) contrast(1.08);
+  transition: filter 400ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
