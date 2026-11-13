@@ -171,7 +171,8 @@ function Index() {
                   key={w.id}
                   to="/works/$id"
                   params={{ id: w.id }}
-                  className="group relative block h-24 overflow-hidden rounded-2xl bg-[var(--surface)]"
+                  className="group relative block h-24 overflow-hidden rounded-2xl"
+                  style={{ background: art(w.title) }}
                 >
                   {(w.backdropUrl || w.posterUrl) && (
                     <img
@@ -257,9 +258,23 @@ function Chip({
   );
 }
 
+/** Teinte stable par œuvre, pour habiller celles qui n'ont pas d'image. */
+function hue(t: string) {
+  let h = 0;
+  for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) % 360;
+  return h;
+}
+function art(t: string) {
+  const h = hue(t);
+  return `radial-gradient(120% 90% at 0% 0%, hsl(${h} 85% 52% / .9), transparent 60%), radial-gradient(110% 90% at 100% 100%, hsl(${(h + 60) % 360} 85% 45% / .85), transparent 60%), #041a53`;
+}
+
 /** Bandeau vedette : l'œuvre la plus commentée, image en plein cadre. */
 function Featured({ works }: { works: Work[] }) {
-  const picks = useMemo(() => works.filter((w) => w.backdropUrl || w.posterUrl).slice(0, 5), [works]);
+  const picks = useMemo(
+    () => [...works].sort((x, y) => (y.ratingsCount ?? 0) - (x.ratingsCount ?? 0)).slice(0, 5),
+    [works],
+  );
   const [i, setI] = useState(0);
   useEffect(() => {
     if (picks.length < 2) return;
@@ -268,22 +283,35 @@ function Featured({ works }: { works: Work[] }) {
   }, [picks.length]);
   if (!picks.length) return null;
   const w = picks[Math.min(i, picks.length - 1)];
-  const img = (x: Work) => (x.backdropUrl || x.posterUrl)!;
+  const img = (x: Work) => x.backdropUrl || x.posterUrl || null;
 
   return (
     <section className="glass relative overflow-hidden rounded-[2rem]">
       <div className="relative h-[400px] md:h-[440px]">
-        {picks.map((p, n) => (
-          <img
-            key={p.id}
-            src={img(p)}
-            alt=""
-            aria-hidden={n !== i}
-            className={`absolute inset-0 size-full object-cover transition-all duration-[1200ms] ${
-              p.backdropUrl ? "" : "scale-110 blur-2xl"
-            } ${n === i ? "opacity-100" : "opacity-0"}`}
-          />
-        ))}
+        {picks.map((p, n) =>
+          img(p) ? (
+            <img
+              key={p.id}
+              src={img(p)!}
+              alt=""
+              aria-hidden={n !== i}
+              className={`absolute inset-0 size-full object-cover transition-all duration-[1200ms] ${
+                p.backdropUrl ? "" : "scale-110 blur-2xl"
+              } ${n === i ? "opacity-100" : "opacity-0"}`}
+            />
+          ) : (
+            <div
+              key={p.id}
+              aria-hidden
+              className={`absolute inset-0 transition-opacity duration-[1200ms] ${n === i ? "opacity-100" : "opacity-0"}`}
+              style={{ background: art(p.title) }}
+            >
+              <span className="absolute -right-6 bottom-[-0.15em] select-none font-display text-[clamp(120px,22vw,300px)] leading-none text-white/10">
+                {p.title}
+              </span>
+            </div>
+          ),
+        )}
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgb(3_9_35/0.95)_0%,rgb(3_9_35/0.55)_50%,transparent_80%)]" />
         <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#030923]/90 to-transparent" />
         <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-10">
@@ -319,7 +347,11 @@ function Featured({ works }: { works: Work[] }) {
               aria-label={p.title}
               className={`h-14 w-24 overflow-hidden rounded-xl border-2 transition ${n === i ? "border-[var(--value)]" : "border-white/10 opacity-60 hover:opacity-100"}`}
             >
-              <img src={img(p)} alt="" className="size-full object-cover" />
+              {img(p) ? (
+                <img src={img(p)!} alt="" className="size-full object-cover" />
+              ) : (
+                <span className="block size-full" style={{ background: art(p.title) }} />
+              )}
             </button>
           ))}
         </div>
@@ -336,7 +368,9 @@ function WorkPoster({ work: w }: { work: Work }) {
         {src ? (
           <img src={src} alt="" loading="lazy" className="size-full object-cover transition duration-700 group-hover:scale-105" />
         ) : (
-          <div className="grid size-full place-items-center p-3 text-center font-display text-xl">{w.title}</div>
+          <div className="grid size-full place-items-center p-3 text-center font-display text-2xl" style={{ background: art(w.title) }}>
+            {w.title}
+          </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#030923]/90 via-transparent to-transparent" />
         <span className="glass absolute top-2 left-2 rounded-full px-2 py-0.5 text-[10px] uppercase tracking-wider">
