@@ -77,7 +77,11 @@
 @layer base {
   html,
   body {
-    background-color: var(--background);
+    background:
+      radial-gradient(60vw 50vh at 8% -10%, rgb(0 89 255 / 0.22), transparent 70%),
+      radial-gradient(50vw 45vh at 100% 15%, rgb(244 85 10 / 0.12), transparent 70%),
+      var(--background);
+    background-attachment: fixed;
     color: var(--foreground);
     font-family: var(--font-sans);
     font-weight: 400;
@@ -140,6 +144,27 @@
 @utility hairline {
   border-color: var(--line);
 }
+
+/* Verre dépoli : panneaux flottants. */
+@utility glass {
+  background: linear-gradient(160deg, rgb(255 255 255 / 0.09), rgb(255 255 255 / 0.03));
+  border: 1px solid rgb(255 255 255 / 0.1);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  box-shadow: 0 24px 60px -30px rgb(0 0 0 / 0.85), inset 0 1px 0 rgb(255 255 255 / 0.06);
+}
+
+/* Rangée horizontale défilante. */
+.shelf {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 0.25rem 0.25rem 1rem;
+  scrollbar-width: none;
+}
+.shelf::-webkit-scrollbar { display: none; }
+.shelf > * { flex: none; scroll-snap-align: start; }
 
 /* Révélation lettre par lettre (intro + titres). */
 .split-char {

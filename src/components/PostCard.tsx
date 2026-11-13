@@ -51,7 +51,7 @@ export function PostCard({ post }: { post: Post }) {
   const initial = post.author.username.charAt(0).toUpperCase();
 
   return (
-    <article className="grid grid-cols-[1fr_auto] gap-x-5 border-t border-[var(--line)] py-6">
+    <article className="glass mb-3 grid grid-cols-[1fr_auto] gap-x-5 rounded-[1.5rem] p-5 md:p-6">
       <div className="min-w-0">
         <header className="flex items-center gap-3">
           <div className="grid size-9 shrink-0 place-items-center rounded-full bg-[var(--ink)] font-display text-base text-[var(--foreground)]">
